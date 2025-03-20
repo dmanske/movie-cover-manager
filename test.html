@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Teste de DetecÃ§Ã£o de HDs</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    .hd-container { display: flex; flex-wrap: wrap; gap: 15px; }
+    .hd-card { 
+      border: 1px solid #ddd; 
+      border-radius: 5px; 
+      padding: 15px; 
+      width: 300px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .hd-card h2 { margin-top: 0; display: flex; align-items: center; }
+    .hd-color { 
+      width: 15px; 
+      height: 15px; 
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .progress { 
+      height: 10px;
+      background-color: #eee;
+      border-radius: 5px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-bar { 
+      height: 100%;
+      background-color: #4CAF50;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      background-color: #2196F3;
+      margin-left: 10px;
+    }
+    .details { color: #666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Teste de DetecÃ§Ã£o de HDs</h1>
+  <div class="hd-container" id="hd-container">
+    <p>Nenhum HD detectado ainda...</p>
+  </div>
+
+  <script>
+    // Receber os HDs do processo principal
+    const { ipcRenderer } = require('electron');
+    
+    ipcRenderer.on('drives-detected', (event, drives) => {
+      console.log('Drives recebidos:', drives);
+      displayDrives(drives);
+    });
+    
+    function displayDrives(drives) {
+      const container = document.getElementById('hd-container');
+      container.innerHTML = '';
+      
+      if (!drives || drives.length === 0) {
+        container.innerHTML = '<p>Nenhum HD detectado.</p>';
+        return;
+      }
+      
+      drives.forEach(hd => {
+        const usedSpace = hd.totalSpace - hd.freeSpace;
+        const usedPercent = Math.round((usedSpace / hd.totalSpace) * 100);
+        
+        const hdCard = document.createElement('div');
+        hdCard.className = 'hd-card';
+        
+        hdCard.innerHTML = 
+          <h2>
+            <span class="hd-color" style="background-color: \"></span>
+            \
+            <span class="badge">\</span>
+          </h2>
+          <div class="details">
+            <p>Caminho: \</p>
+            <p>Tipo: \</p>
+            <p>EspaÃ§o Total: \ TB</p>
+            <p>EspaÃ§o Livre: \ TB</p>
+            <p>EspaÃ§o Usado: \ TB</p>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" style="width: \%"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <span>\% usado</span>
+            <span>\ TB livre</span>
+          </div>
+        ;
+        
+        container.appendChild(hdCard);
+      });
+    }
+  </script>
+</body>
+</html>

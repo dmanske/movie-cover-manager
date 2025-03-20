@@ -1,0 +1,13 @@
+@echo off
+echo Iniciando o servidor Next.js...
+start cmd /k "npm run dev"
+
+echo Aguardando 8 segundos para o servidor iniciar...
+timeout /t 8 /nobreak > nul
+
+echo Verificando o ambiente...
+node electron/check-env.js
+
+echo Iniciando o Electron...
+set NODE_ENV=development
+start cmd /k "npx electron ." 
